@@ -1,0 +1,158 @@
+import 'package:flutter/material.dart';
+
+class Fakha extends StatefulWidget {
+  const Fakha({Key? key}) : super(key: key);
+
+  @override
+  State<Fakha> createState() => _FakhaState();
+}
+var defaultColor=Color(0xffabb9ff);
+var defaultcolor2=Color(0xff6a45e3);
+class _FakhaState extends State<Fakha> {
+  List<Map> products=[
+    {
+      'name':'Tomato',
+      'price':23,
+      'weight':0,
+      'image':'https://www.beyondfruits.co.ke/wp-content/uploads/2021/01/Tomatos.jpg'
+    },
+    {
+      'name':'Cucumber',
+      'price':30,
+      'weight':0,
+      'image':'https://4.bp.blogspot.com/-PMkqDLIDgtU/U7s9hQWoiDI/AAAAAAAAIcI/ECDZjo7Uwtw/s1600/1+cucumber.jpg'
+    },
+    {
+      'name':'Carrot',
+      'price':18,
+      'weight':0,
+      'image':'https://th.bing.com/th/id/OIP.pogMD_Hacdf1tect-xwrLQHaE1?w=306&h=200&c=7&r=0&o=5&pid=1.7'
+    },
+    {
+      'name':'Onion',
+      'price':10,
+      'weight':0,
+      'image':'https://th.bing.com/th/id/OIP.OSkBSmDFHz01UCc5RaIOMgHaFL?w=269&h=189&c=7&r=0&o=5&pid=1.7'
+    },
+    {
+      'name':'Potato',
+      'price':15,
+      'weight':0,
+      'image':'https://preview.redd.it/rjm8q0rr7x0z.jpg?width=960&crop=smart&auto=webp&s=b31ecc8eabff2951014498d2005df54b187e4988'
+    },
+    {
+      'name':'Pepper',
+      'price':21,
+      'weight':0,
+      'image':'https://th.bing.com/th/id/OIP.T-cAzDnBGa-orKX4LJK7iAEyDL?w=270&h=180&c=7&r=0&o=5&pid=1.7'
+    },
+  ];
+  @override
+  Widget build(BuildContext context) {
+
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor:defaultColor,
+        elevation: 0.0,
+      ),
+      body: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: ListView.builder(
+            itemBuilder: (context, index) => Column(
+              children: [
+                Card(
+                  color: Colors.white,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)) ,
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Container(
+                          height: 200,
+                          decoration: BoxDecoration(
+                            color: Colors.brown,
+                            image:  DecorationImage(
+                              image: NetworkImage(
+                                  products[index]['image']),
+                              fit: BoxFit.fill,
+                            ),
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        width: 200,
+                        child: Column(
+                          children: [
+                            Text('${products[index]['name']}',
+                              style: const TextStyle(
+                                fontSize: 25,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            Text('${products[index]['price']}LE',
+                              style: const TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 20),
+                              child: Row(
+                                children: [
+                                  FloatingActionButton(
+                                    onPressed: () {
+                                      products[index]['weight'] +=0.5;
+                                      setState(() {});
+                                    },
+                                    backgroundColor: Colors.green,
+                                    child: const Icon(
+                                      Icons.add,
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Text('${products[index]['weight']}',
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 18,
+                                    ),
+                                    ),
+                                  ),
+                                  FloatingActionButton(
+                                    onPressed: () {
+                                      setState(() {products[index]['weight'] -=0.5;
+                                      if(products[index]['weight']<0){
+                                        products[index]['weight']=0;
+                                      }
+                                      });},
+                                    backgroundColor: Colors.red,
+                                    child: const Icon(
+                                      Icons.minimize,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            )
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+                const SizedBox(
+                  height: 15,
+                )
+              ],
+            ),
+            itemCount: products.length,
+          ),
+      ),
+      backgroundColor: Colors.white,
+    );
+  }
+}
