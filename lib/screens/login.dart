@@ -1,15 +1,34 @@
+import 'package:ecommerce/Admin/admin.dart';
+import 'package:ecommerce/Helperdp/databasehelper.dart';
+import 'package:ecommerce/components/constance/color.dart';
+import 'package:ecommerce/provider/home_provider.dart';
 import 'package:ecommerce/screens/home.dart';
 import 'package:ecommerce/screens/signup.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-class Login extends StatelessWidget {
 
+
+
+class Login extends StatefulWidget {
+
+  @override
+  State<Login> createState() => _LoginState();
+}
+
+class _LoginState extends State<Login> {
 var emailController=TextEditingController();
+bool isClicked=false;
+bool pass=false;
+bool em=false;
 var passController=TextEditingController();
+
 var formKey=GlobalKey<FormState>();
+
   @override
   Widget build(BuildContext context) {
-    return  Scaffold(
+    return Scaffold(
+
       backgroundColor: Colors.white,
 
       appBar:AppBar(
@@ -37,6 +56,9 @@ var formKey=GlobalKey<FormState>();
                     keyboardType: TextInputType.emailAddress,
 
 validator: (String?val){
+                      if(!em){
+                        return"Email doesn't exist";
+                      }
   if(val!.isEmpty){
     return "field must not be empty";
   }
@@ -59,15 +81,21 @@ validator: (String?val){
                   TextFormField(
                     controller: passController,
                     keyboardType: TextInputType.visiblePassword,
-                    obscureText: true,
+                    obscureText: isClicked?false:true,
 
 
                validator: (String? val){
-        if(val==null){
+
+                      if(!pass){
+                        return'Incorrect Password';
+                      }
+
+        if(val!.isEmpty){
               return "please enter a password";
               }
            else if(val.length < 6){
                return "password must be at least 6 characters";
+
   }
            return null;
 
@@ -77,8 +105,12 @@ validator: (String?val){
 
                       labelText: 'Password',prefixIcon: Icon(Icons.lock,color: Color(0xffabb9ff),),
                       border: OutlineInputBorder(borderRadius:BorderRadius.circular(20)),
-                      suffixIcon: IconButton(icon: Icon(Icons.remove_red_eye,color: Color(0xffabb9ff),),onPressed: (){
+                      suffixIcon: IconButton(icon: Icon(isClicked?Icons.visibility_off_sharp:Icons.visibility),color: Color(0xffabb9ff)
+                        ,onPressed: (){
 
+setState(() {
+  isClicked=!isClicked;
+});
                       },),
 
 
@@ -94,12 +126,27 @@ validator: (String?val){
 
                     ),
                     child: MaterialButton(
-                      onPressed: (){if(formKey.currentState!.validate()){
+                      onPressed: () async {
+String emailVal=emailController.text;
+String passVal=passController.text;
+bool success = await DatabaseHelper.isUserPresent(emailVal, passVal);
+if(success){
+  pass=true;
+  em=true;
+  if(formKey.currentState!.validate()){
 
-                        Navigator.push(context, MaterialPageRoute(builder: (build)=>home()),);
+    Navigator.pushNamed(context, '/Home');
+
+  }
 
 
-                      }
+}
+else
+  {
+    if(formKey.currentState!.validate());
+  }
+
+
 
                       },child: Text('SIGN IN'),
 
@@ -112,13 +159,22 @@ validator: (String?val){
                     children: [
                       Text("Don't have an account ?"),
                       TextButton(onPressed: (){
+
                         Navigator.push(context, MaterialPageRoute(builder: (build)=>Signup()),);
 
 
                       }, child: Text('SIGN UP',style: TextStyle(color:Color(0xff634eff) ),)),
 
                     ],
-                  )
+                  ),
+                  TextButton(onPressed: (){
+
+                    Navigator.push(context, MaterialPageRoute(builder: (build)=>Admin()));
+
+
+
+                  }, child: Text('LOGIN AS ADMIN',style: TextStyle(color:Color(0xff634eff) ),)),
+
 
 
                 ],

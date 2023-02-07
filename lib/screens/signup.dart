@@ -1,11 +1,24 @@
+import 'package:ecommerce/Helperdp/databasehelper.dart';
+import 'package:ecommerce/models/usermodel.dart';
 import 'package:ecommerce/screens/home.dart';
 import 'package:flutter/material.dart';
 
-class Signup extends StatelessWidget {
+class Signup extends StatefulWidget {
+  @override
+  State<Signup> createState() => _SignupState();
+}
+
+class _SignupState extends State<Signup> {
   var formKey=GlobalKey<FormState>();
+
   var NameController=TextEditingController();
+
   var emailController=TextEditingController();
+
   var passController=TextEditingController();
+
+  var phoneNoController=TextEditingController();
+bool isClicked=false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -85,7 +98,7 @@ leading:IconButton(icon: Icon(Icons.arrow_back_ios_new_outlined,color: Colors.bl
                 TextFormField(
                   controller: passController,
                   keyboardType: TextInputType.visiblePassword,
-                  obscureText: true,
+                  obscureText: isClicked?false:true,
 
 
                   validator: (String? val){
@@ -94,6 +107,7 @@ leading:IconButton(icon: Icon(Icons.arrow_back_ios_new_outlined,color: Colors.bl
                     }
                     else if(val.length < 6){
                       return "password must be at least 6 characters";
+
                     }
                     return null;
 
@@ -103,14 +117,47 @@ leading:IconButton(icon: Icon(Icons.arrow_back_ios_new_outlined,color: Colors.bl
 
                     labelText: 'Password',prefixIcon: Icon(Icons.lock,color: Color(0xffabb9ff),),
                     border: OutlineInputBorder(borderRadius:BorderRadius.circular(20)),
-                    suffixIcon: IconButton(icon: Icon(Icons.remove_red_eye,color: Color(0xffabb9ff),),onPressed: (){
+                    suffixIcon: IconButton(icon: Icon(isClicked?Icons.visibility_off_sharp:Icons.visibility),color: Color(0xffabb9ff)
+                      ,onPressed: (){
 
-                    },),
+                        setState(() {
+                          isClicked=!isClicked;
+                        });
+                      },),
 
 
                   ),
                   cursorColor: Colors.black,
                 ),
+                SizedBox(height: 20,),
+                TextFormField(
+                  controller: phoneNoController,
+                  keyboardType: TextInputType.phone,
+
+
+
+                  validator: (String? val){
+                    if(val!.isEmpty){
+                      return "please enter a phone NO";
+                    }
+                    else if(val.length != 11){
+                      return "Phone No. must be 11 digits";
+                    }
+                    return null;
+
+                  },
+
+                  decoration: InputDecoration(
+
+                    labelText: 'Phone',prefixIcon: Icon(Icons.phone_android,color: Color(0xffabb9ff),),
+                    border: OutlineInputBorder(borderRadius:BorderRadius.circular(20)),
+
+
+
+                  ),
+                  cursorColor: Colors.black,
+                ),
+
                 SizedBox(height: 40,),
                 Container(
                   width: 200,
@@ -120,12 +167,18 @@ leading:IconButton(icon: Icon(Icons.arrow_back_ios_new_outlined,color: Colors.bl
 
                   ),
                   child: MaterialButton(
-                    onPressed: (){if(formKey.currentState!.validate()){
+                    onPressed: () async {
+                      String name = NameController.text;
+                      String email = emailController.text;
+                      String pass = passController.text;
+                      String phoneNo=phoneNoController.text;
 
-                      Navigator.push(context, MaterialPageRoute(builder: (build)=>home()),);
+                      User user = new User(name:name,email: email,password: pass,phoneNo: phoneNo) ;
 
-
-                    }
+                      if(formKey.currentState!.validate()){
+                        DatabaseHelper.addUser(user);
+                        Navigator.popAndPushNamed(context, '/Home');
+                      }
 
                     },child: Text('Create an account'),
 
